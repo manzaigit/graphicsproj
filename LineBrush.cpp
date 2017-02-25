@@ -47,7 +47,7 @@ void LineBrush::BrushMove( const Point source, const Point target )
 
 		case 1: // right mouse
 
-			lineangle = directionlineangle;
+			// lineangle = directionlineangle;
 
 			break;
 

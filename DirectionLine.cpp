@@ -45,10 +45,10 @@ void DirectionLine::BrushMove( const Point source, const Point target )
 	glVertex2d( target.x, target.y );
 	glEnd();
 
-	float rawangle = atan((target.y - startpoint->y) / (target.x - startpoint->x)) * 180 / 3.14159;
+	/*float rawangle = atan((target.y - startpoint->y) / (target.x - startpoint->x)) * 180 / 3.14159;
 	if (rawangle < 0) {
 		rawangle += 360;
-	}
+	}*/
 	
 }
 
