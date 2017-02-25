@@ -44,8 +44,8 @@ void ImpBrush::SetColor (const Point source)
 {
 	ImpressionistDoc* pDoc = GetDocument();
 
-	glenable(glblend);
-	GLblendfunc
+	//glenable(glblend);
+	//GLblendfunc
 
 	GLubyte color[3];
 
