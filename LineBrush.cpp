@@ -77,7 +77,7 @@ void LineBrush::BrushMove( const Point source, const Point target )
 		case 3: // gradient
 
 			GLubyte color[3];
-			int greyness[5][5];
+			float greyness[5][5];
 			for (int i = -2; i < 3; i++) {
 				for (int j = -2; j < 3, j++;) {
 					if (target.x <= 1 || target.y <= 1 || target.x >= pDoc->m_nWidth - 1 || target.y >= pDoc->m_nHeight - 1) {
@@ -92,13 +92,13 @@ void LineBrush::BrushMove( const Point source, const Point target )
 
 			// process grayscale matrix w/ gaussian filter		
 
-			int blurred_pixels[3][3];
+			float blurred_pixels[3][3];
 
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 3; j++) {
 					for (int k = 0; k < 3; k++) {
 						for (int l = 0; l < 3; l++) {
-							blurred_pixels[i][j] += greyness[k + i][l + j] * gaussian_kernal[k][l];
+							blurred_pixels[i][j] += greyness[k + i][l + j] * (float) gaussian_kernal[k][l];
 						}
 					}
 					blurred_pixels[i][j] /= 16;
@@ -109,23 +109,28 @@ void LineBrush::BrushMove( const Point source, const Point target )
 
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 3; j++) {
-					x_gradient += sobel_x[i][j] * blurred_pixels[i][j];
+					x_gradient += (float) sobel_x[i][j] * blurred_pixels[i][j];
 				}
 			}
 		
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 3; j++) {
-					y_gradient += sobel_y[i][j] * blurred_pixels[i][j];
+					y_gradient += (float) sobel_y[i][j] * blurred_pixels[i][j];
 				}
 			}
 
 			// make perpendicular
 
-			float sobel_angle;
+			int sobel_angle;
 
 			sobel_angle = atan((float)(y_gradient) / (float)(x_gradient)) * 180 / 3.14159;
 			if (sobel_angle < 0) {
 				sobel_angle += 360;
+			}
+
+			sobel_angle += 90;
+			if (sobel_angle > 360) {
+				sobel_angle -= 180;
 			}
 
 			if (pDoc->m_pCurrentDirection == 3) {
