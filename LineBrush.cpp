@@ -43,6 +43,10 @@ void LineBrush::BrushMove( const Point source, const Point target )
 	int size = pDoc->getSize();
 	int lineangle = 0;
 	int rawangle = 0;
+
+	float x_gradient = 0;
+	float y_gradient = 0;
+	
 	switch (pDoc->m_pCurrentDirection) {
 
 		case 1: // right mouse
@@ -52,7 +56,7 @@ void LineBrush::BrushMove( const Point source, const Point target )
 			break;
 
 		case 2: // mouse direction
-			
+
 			rawangle = atan((float)(target.y - brushdirection_startpoint.y) / (float)(target.x - brushdirection_startpoint.x)) * 180 / 3.14159;
 			if (target.x < brushdirection_startpoint.x) {
 				rawangle += 180;
@@ -71,40 +75,73 @@ void LineBrush::BrushMove( const Point source, const Point target )
 			break;
 
 		case 3: // gradient
-			/*
+
 			GLubyte color[3];
-			int greyness[3][3];
-			for (int i = -1; i < 2; i++) {
-				for (int j = -1; j < 2, j++;) {
-					if (target.x == 0 || target.y == 0 || target.x == pDoc->m_nWidth || target.y == pDoc->m_nHeight) {
+			int greyness[5][5];
+			for (int i = -2; i < 3; i++) {
+				for (int j = -2; j < 3, j++;) {
+					if (target.x <= 1 || target.y <= 1 || target.x >= pDoc->m_nWidth - 1 || target.y >= pDoc->m_nHeight - 1) {
 						memcpy(color, pDoc->GetOriginalPixel(target.x, target.y), 3);
 					}
 					else {
 						memcpy(color, pDoc->GetOriginalPixel(target.x + i, target.y + j), 3);
 					}
-					
-					greyness[i + 1][j + 1] = 0.299 * color[0] + 0.587 * color[1] + 0.144 * color[2];	// getting grayscale value
-
-					
+					greyness[i + 2][j + 2] = 0.299 * color[0] + 0.587 * color[1] + 0.144 * color[2];	// getting grayscale value					
 				}
 			}
 
-			// process grayscale matrix w/ gaussian filter
+			// process grayscale matrix w/ gaussian filter		
 
-			int gaussian_kernal[3][3] = { 1,2,1,2,4,2,1,2,1 };
+			int blurred_pixels[3][3];
 
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 3; j++) {
-					greyness[i][j] ;
+					for (int k = 0; k < 3; k++) {
+						for (int l = 0; l < 3; l++) {
+							blurred_pixels[i][j] += greyness[k + i][l + j] * gaussian_kernal[k][l];
+						}
+					}
+					blurred_pixels[i][j] /= 16;
 				}
-			} */
+			}
+
+			// get gradients 
+
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					x_gradient += sobel_x[i][j] * blurred_pixels[i][j];
+				}
+			}
+		
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					y_gradient += sobel_y[i][j] * blurred_pixels[i][j];
+				}
+			}
+
+			// make perpendicular
+
+			float sobel_angle;
+
+			sobel_angle = atan((float)(y_gradient) / (float)(x_gradient)) * 180 / 3.14159;
+			if (sobel_angle < 0) {
+				sobel_angle += 360;
+			}
+
+			if (pDoc->m_pCurrentDirection == 3) {
+				pDoc->m_pUI->setLineAngle(sobel_angle);
+			}
+
+			// set brush angle
+
+			lineangle = pDoc->getLineAngle();		
 
 			break;
 
 
 		default:
 			lineangle = pDoc->getLineAngle();			
-				break;
+			break;
 
 	}
 
