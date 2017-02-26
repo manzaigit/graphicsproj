@@ -321,7 +321,7 @@ void ImpressionistUI::cb_LineAngleSlides(Fl_Widget* o, void* v)
 
 void ImpressionistUI::cb_AlphaSlides(Fl_Widget* o, void* v)
 {
-	((ImpressionistUI*)(o->user_data()))->m_nAlpha = int(((Fl_Slider *)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_nAlpha = float(((Fl_Slider *)o)->value());
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -437,7 +437,7 @@ void ImpressionistUI::setAlpha(float Alpha)
 	m_nAlpha = Alpha;
 
 	if (Alpha <= 1.00)
-		m_AlphaSlider->value(m_nLineAngle);
+		m_AlphaSlider->value(m_nAlpha);
 }
 
 // Main menu definition

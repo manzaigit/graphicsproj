@@ -119,17 +119,27 @@ void PaintView::draw()
 			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-			SaveCurrentContent(); 
-			guideline = new DirectionLine(m_pDoc, "Direction Line");
-			guideline->BrushBegin(source, target);
+			
+			if (m_pDoc->m_pCurrentDirection == 1) {
+				SaveCurrentContent();
+				guideline = new DirectionLine(m_pDoc, "Direction Line");
+				guideline->BrushBegin(source, target);
+			}
+			
 			break;
 		case RIGHT_MOUSE_DRAG:
-			RestoreContent(); 
-			guideline->BrushMove(source, target);
+			if (m_pDoc->m_pCurrentDirection == 1) {
+				RestoreContent();
+				guideline->BrushMove(source, target);
+			}
 			break;
+
 		case RIGHT_MOUSE_UP:
-			guideline->BrushEnd(source, target);
-			RestoreContent();
+			if (m_pDoc->m_pCurrentDirection == 1) {
+				guideline->BrushEnd(source, target);
+				RestoreContent();
+			}
+			
 			break;
 
 		default:
